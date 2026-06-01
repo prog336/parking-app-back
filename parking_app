@@ -1,0 +1,266 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict 4TsKRYoM4FfgG3hSrCIMwnOtotB1s11BtN3P5G8FyQHMuU23ApYOJeFtNbewAMc
+
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
+
+-- Started on 2026-06-01 12:57:02
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 219 (class 1259 OID 38619)
+-- Name: bookings; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.bookings (
+    id uuid NOT NULL,
+    cost integer NOT NULL,
+    end_time timestamp(6) with time zone NOT NULL,
+    is_paid boolean NOT NULL,
+    start_time timestamp(6) with time zone NOT NULL,
+    parking_spot_id uuid NOT NULL,
+    vehicle_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.bookings OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 38631)
+-- Name: owners; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.owners (
+    id uuid NOT NULL,
+    full_name text NOT NULL,
+    phone_number text NOT NULL
+);
+
+
+ALTER TABLE public.owners OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 38641)
+-- Name: parking_spots; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.parking_spots (
+    id uuid NOT NULL,
+    is_occupied boolean NOT NULL,
+    spot_number text NOT NULL
+);
+
+
+ALTER TABLE public.parking_spots OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 38651)
+-- Name: vehicles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.vehicles (
+    id uuid NOT NULL,
+    brand text,
+    license_plate text NOT NULL,
+    model text,
+    owner_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.vehicles OWNER TO postgres;
+
+--
+-- TOC entry 4934 (class 0 OID 38619)
+-- Dependencies: 219
+-- Data for Name: bookings; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.bookings (id, cost, end_time, is_paid, start_time, parking_spot_id, vehicle_id) FROM stdin;
+c1408555-761a-45a8-b44e-1b3c96283e38	16800	2026-06-08 00:00:00+03	f	2026-06-01 00:00:00+03	76fb3d83-afe2-449b-8ed3-f394ff81bf57	2df0818d-4666-47e9-aec7-64ce238f5216
+4d3fb356-da63-4fe4-8a94-2a97e866460b	4800	2026-06-04 00:00:00+03	t	2026-06-02 00:00:00+03	84bc0d10-d1c0-482d-ac6e-6022c6d39b2c	8797870b-4d46-4282-9613-b08d96894a68
+\.
+
+
+--
+-- TOC entry 4935 (class 0 OID 38631)
+-- Dependencies: 220
+-- Data for Name: owners; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.owners (id, full_name, phone_number) FROM stdin;
+e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3	Городилов Д.В.	+79282719911
+65f08b77-afc0-4681-907f-b469f4fab235	Попов А.Д.	+79282719910
+2e64862f-7154-498f-b029-188d1d5de8aa	Комаров Л.В.	+79282719918
+c3de0249-f426-4aaa-9262-eb338e552e6e	Кириченко Г.Н.	+79282719917
+9d3dae30-2630-4871-b2fe-c4ea97e8ae2d	Маков Б.И.	+79282719916
+8ce2d682-6a6b-4d97-a1a6-4f5731379bc8	Фамильенко А.А.	+79282719915
+d44fdebb-cbaa-4181-8e47-9523f395f9e7	Красный О.М.	+79282719914
+9e0d86c6-e0f5-4533-a9ef-0f8c5dbcb753	Омен М.А.	+79282719913
+275cb0b6-d073-4da9-8be6-4e58c1efc3e6	Позняк М.Е.	+79282719912
+82bf1cc9-588b-41ec-8ce1-19a48b47afa4	Иванов И.И.	8-900-999-90-90
+\.
+
+
+--
+-- TOC entry 4936 (class 0 OID 38641)
+-- Dependencies: 221
+-- Data for Name: parking_spots; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.parking_spots (id, is_occupied, spot_number) FROM stdin;
+2c4bd2e2-7485-4c61-b278-a585d0123149	f	F5
+e3cf1f15-cf7b-4e01-b9ca-07d9db405d21	f	И102
+76fb3d83-afe2-449b-8ed3-f394ff81bf57	t	A5
+84bc0d10-d1c0-482d-ac6e-6022c6d39b2c	t	П35
+\.
+
+
+--
+-- TOC entry 4937 (class 0 OID 38651)
+-- Dependencies: 222
+-- Data for Name: vehicles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.vehicles (id, brand, license_plate, model, owner_id) FROM stdin;
+854dd4bc-3551-4ab6-81d1-7d95558dbb73		GRGGR		d44fdebb-cbaa-4181-8e47-9523f395f9e7
+63141f73-4738-461f-a574-64f02cd17e2b	Haval	WE 306BW	M6	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
+2df0818d-4666-47e9-aec7-64ce238f5216	Mazda	А111АА	Miata	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
+8797870b-4d46-4282-9613-b08d96894a68	Лада	Н512ОМ	Гранта	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
+4592e40b-63cc-48a7-bd18-7f9521a17f6c	Mercedes	DO 6543 GE	GLC	65f08b77-afc0-4681-907f-b469f4fab235
+\.
+
+
+--
+-- TOC entry 4767 (class 2606 OID 38630)
+-- Name: bookings bookings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT bookings_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4773 (class 2606 OID 38640)
+-- Name: owners owners_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.owners
+    ADD CONSTRAINT owners_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4777 (class 2606 OID 38650)
+-- Name: parking_spots parking_spots_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.parking_spots
+    ADD CONSTRAINT parking_spots_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4781 (class 2606 OID 38670)
+-- Name: vehicles uk9vovnbiegxevdhqfcwvp2g8pj; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehicles
+    ADD CONSTRAINT uk9vovnbiegxevdhqfcwvp2g8pj UNIQUE (license_plate);
+
+
+--
+-- TOC entry 4769 (class 2606 OID 38664)
+-- Name: bookings uka1b78amwx498s9lyj6r692q3r; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT uka1b78amwx498s9lyj6r692q3r UNIQUE (vehicle_id);
+
+
+--
+-- TOC entry 4771 (class 2606 OID 38662)
+-- Name: bookings ukkody4wdt4d2fpfjy2sosyt15j; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT ukkody4wdt4d2fpfjy2sosyt15j UNIQUE (parking_spot_id);
+
+
+--
+-- TOC entry 4779 (class 2606 OID 38668)
+-- Name: parking_spots ukrnquqnwcq3cdjb1ulmcm3h4l5; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.parking_spots
+    ADD CONSTRAINT ukrnquqnwcq3cdjb1ulmcm3h4l5 UNIQUE (spot_number);
+
+
+--
+-- TOC entry 4775 (class 2606 OID 38666)
+-- Name: owners uktbr2prlcpj2g7rj3cmp0fdx7y; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.owners
+    ADD CONSTRAINT uktbr2prlcpj2g7rj3cmp0fdx7y UNIQUE (phone_number);
+
+
+--
+-- TOC entry 4783 (class 2606 OID 38660)
+-- Name: vehicles vehicles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehicles
+    ADD CONSTRAINT vehicles_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4786 (class 2606 OID 38681)
+-- Name: vehicles fk9mro2yegbtqmqwueeq9lyrmrj; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehicles
+    ADD CONSTRAINT fk9mro2yegbtqmqwueeq9lyrmrj FOREIGN KEY (owner_id) REFERENCES public.owners(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4784 (class 2606 OID 38676)
+-- Name: bookings fkc0062bk3bchs55diw805avxq; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT fkc0062bk3bchs55diw805avxq FOREIGN KEY (vehicle_id) REFERENCES public.vehicles(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4785 (class 2606 OID 38671)
+-- Name: bookings fkfaocmygpfumie1lf090rnk9lt; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT fkfaocmygpfumie1lf090rnk9lt FOREIGN KEY (parking_spot_id) REFERENCES public.parking_spots(id) ON DELETE CASCADE;
+
+
+-- Completed on 2026-06-01 12:57:02
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict 4TsKRYoM4FfgG3hSrCIMwnOtotB1s11BtN3P5G8FyQHMuU23ApYOJeFtNbewAMc
+
