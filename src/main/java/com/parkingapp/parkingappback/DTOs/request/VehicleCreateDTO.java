@@ -1,4 +1,4 @@
-package com.parkingapp.parkingappback.DTOs;
+package com.parkingapp.parkingappback.DTOs.request;
 
 import java.util.UUID;
 

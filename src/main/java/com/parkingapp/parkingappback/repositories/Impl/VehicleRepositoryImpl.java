@@ -1,7 +1,8 @@
-package com.parkingapp.parkingappback.repositories;
+package com.parkingapp.parkingappback.repositories.Impl;
 
 import com.parkingapp.parkingappback.entities.Owner;
 import com.parkingapp.parkingappback.entities.Vehicle;
+import com.parkingapp.parkingappback.repositories.VehicleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 @AllArgsConstructor
-public class VehicleRepository {
+public class VehicleRepositoryImpl implements VehicleRepository {
   private final JdbcTemplate jdbcTemplate;
 
   private Vehicle mapVehicles(ResultSet rs) throws SQLException {
@@ -33,6 +34,7 @@ public class VehicleRepository {
     return vehicle;
   }
 
+  @Override
   public List<Vehicle> findAll(){
     String sql = """
       SELECT v.id as vehicle_id, v.license_plate, v.brand, v.model, o.id as owner_id, o.full_name, o.phone_number
@@ -43,6 +45,7 @@ public class VehicleRepository {
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapVehicles(rs));
   }
 
+  @Override
   public Optional<Vehicle> findById(UUID id){
     String sql = """
       SELECT v.id as vehicle_id, v.license_plate, v.brand, v.model, o.id as owner_id, o.full_name, o.phone_number
@@ -55,6 +58,7 @@ public class VehicleRepository {
     return vehicles.isEmpty() ? Optional.empty() : Optional.of(vehicles.getFirst());
   }
 
+  @Override
   public List<Vehicle> findByLicensePlate(String licensePlate){
     String sql = """
       SELECT v.id as vehicle_id, v.license_plate, v.brand, v.model, o.id as owner_id, o.full_name, o.phone_number
@@ -66,6 +70,7 @@ public class VehicleRepository {
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapVehicles(rs), "%" + licensePlate + "%");
   }
 
+  @Override
   public Vehicle create(Vehicle vehicle){
     if (vehicle.getId() == null) {
       vehicle.setId(UUID.randomUUID());
@@ -78,6 +83,7 @@ public class VehicleRepository {
     return vehicle;
   }
 
+  @Override
   public Vehicle update(Vehicle vehicle){
     String sql = "UPDATE vehicles SET license_plate = ?, brand = ?, model = ?, owner_id = ? WHERE id = ?";
     jdbcTemplate.update(sql,
@@ -86,6 +92,7 @@ public class VehicleRepository {
     return vehicle;
   }
 
+  @Override
   public boolean deleteById(UUID id){
     String sql = "DELETE FROM vehicles WHERE id = ?";
     int affectedRowsCount = jdbcTemplate.update(sql, id);
@@ -93,6 +100,7 @@ public class VehicleRepository {
     return affectedRowsCount > 0;
   }
 
+  @Override
   public boolean existsById(UUID id){
     String sql = "SELECT COUNT(*) FROM vehicles WHERE id = ?";
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
@@ -100,6 +108,7 @@ public class VehicleRepository {
     return count != null && count > 0;
   }
 
+  @Override
   public boolean existsByLicensePlate(String licensePlate){
     String sql = "SELECT COUNT(*) FROM vehicles WHERE license_plate = ?";
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class, licensePlate);
