@@ -28,7 +28,7 @@ public class OwnerRepositoryImpl implements OwnerRepository {
 
   @Override
   public List<Owner> findAll(){
-    String sql = "SELECT id, full_name, phone_number FROM owners";
+    String sql = "SELECT id, full_name, phone_number FROM owners ORDER BY full_name";
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapOwners(rs));
   }
@@ -43,7 +43,7 @@ public class OwnerRepositoryImpl implements OwnerRepository {
 
   @Override
   public List<Owner> findByFullName(String fullName){
-    String sql = "SELECT id, full_name, phone_number FROM owners WHERE LOWER(full_name) LIKE LOWER(?)";
+    String sql = "SELECT id, full_name, phone_number FROM owners WHERE LOWER(full_name) LIKE LOWER(?) ORDER BY full_name";
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapOwners(rs), "%" + fullName + "%");
   }

@@ -1,9 +1,6 @@
 package com.parkingapp.parkingappback.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +11,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "owners")
+@Table(name = "owners", indexes = {
+  @Index(name = "idx_owners_full_name", columnList = "full_name")
+})
 public class Owner {
   @Id
   private UUID id;

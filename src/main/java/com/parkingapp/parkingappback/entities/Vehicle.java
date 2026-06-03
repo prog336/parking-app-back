@@ -13,7 +13,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "vehicles")
+@Table(name = "vehicles", indexes = {
+  @Index(name = "idx_vehicles_owner_id", columnList = "owner_id")
+})
 public class Vehicle {
   @Id
   private UUID id;

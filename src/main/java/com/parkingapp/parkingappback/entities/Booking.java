@@ -14,7 +14,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "bookings")
+@Table(name = "bookings", indexes = {
+  @Index(name = "idx_bookings_parking_spot_id", columnList = "parking_spot_id"),
+  @Index(name = "idx_bookings_vehicle_id", columnList = "vehicle_id"),
+  @Index(name = "idx_bookings_end_time", columnList = "end_time")
+})
 public class Booking {
   @Id
   private UUID id;

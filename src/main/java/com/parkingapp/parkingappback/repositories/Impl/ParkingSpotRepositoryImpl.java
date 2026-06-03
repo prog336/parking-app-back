@@ -29,7 +29,7 @@ public class ParkingSpotRepositoryImpl implements ParkingSpotRepository {
 
   @Override
   public List<ParkingSpot> findAll(){
-    String sql = "SELECT id, spot_number, is_occupied FROM parking_spots";
+    String sql = "SELECT id, spot_number, is_occupied FROM parking_spots ORDER BY spot_number";
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapParkingSpots(rs));
   }

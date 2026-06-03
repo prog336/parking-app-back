@@ -40,6 +40,7 @@ public class VehicleRepositoryImpl implements VehicleRepository {
       SELECT v.id as vehicle_id, v.license_plate, v.brand, v.model, o.id as owner_id, o.full_name, o.phone_number
       FROM vehicles v
       JOIN owners o ON v.owner_id = o.id
+      ORDER BY o.full_name
       """;
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapVehicles(rs));
@@ -65,6 +66,7 @@ public class VehicleRepositoryImpl implements VehicleRepository {
       FROM vehicles v
       JOIN owners o ON v.owner_id = o.id
       WHERE LOWER(v.license_plate) LIKE LOWER(?)
+      ORDER BY o.full_name
       """;
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapVehicles(rs), "%" + licensePlate + "%");
