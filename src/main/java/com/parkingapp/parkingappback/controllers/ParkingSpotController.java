@@ -4,7 +4,7 @@ import com.parkingapp.parkingappback.DTOs.request.ParkingSpotCreateDTO;
 import com.parkingapp.parkingappback.entities.ParkingSpot;
 import com.parkingapp.parkingappback.services.ParkingSpotService;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ public class ParkingSpotController {
 
     ParkingSpot parkingSpot = parkingSpotService.createParkingSpot(parkingSpotCreateDTO.spotNumber());
 
-    return ResponseEntity.ok(true);
+    return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpot);
   }
 
   @PutMapping("/{parkingSpotId}")
@@ -47,7 +47,7 @@ public class ParkingSpotController {
     ParkingSpot parkingSpot = parkingSpotService.updateParkingSpotNumber(parkingSpotId,
       parkingSpotCreateDTO.spotNumber());
 
-    return ResponseEntity.ok(true );
+    return ResponseEntity.ok(parkingSpot);
   }
 
   @DeleteMapping("/{parkingSpotId}")

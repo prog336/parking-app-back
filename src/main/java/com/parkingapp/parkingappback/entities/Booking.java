@@ -32,7 +32,7 @@ public class Booking {
   @Column(name = "is_paid", nullable = false)
   private boolean isPaid;
 
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "INT CHECK (cost > 0)")
   private int cost;
 
   @OneToOne

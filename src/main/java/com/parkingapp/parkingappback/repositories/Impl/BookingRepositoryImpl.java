@@ -127,6 +127,21 @@ public class BookingRepositoryImpl implements BookingRepository {
   }
 
   @Override
+  public List<Booking> findByVehicleLicensePlateAndOwnerFullName(String licensePlate, String fullName){
+    String sql = """
+      SELECT b.id as booking_id, b.start_time, b.end_time, b.is_paid, b.cost, ps.id as parking_spot_id, ps.spot_number, ps.is_occupied, v.id as vehicle_id, v.license_plate, v.brand, v.model, o.id as owner_id, o.full_name, o.phone_number
+      FROM bookings b
+      JOIN parking_spots ps ON b.parking_spot_id = ps.id
+      JOIN vehicles v ON b.vehicle.id = v.id
+      JOIN owners o ON v.owner_id = o.id
+      WHERE UPPER(v.license_plate) LIKE UPPER(?) AND LOWER(o.full_name) LIKE LOWER(?)
+      ORDER BY o.full_name
+      """;
+    
+    return jdbcTemplate.query(sql,(rs, rowNum) -> mapBookings(rs));
+  }
+
+  @Override
   public List<Booking> findByEndTime(Instant endTime){
     String sql = """
       SELECT b.id as booking_id, ps.id as parking_spot_id

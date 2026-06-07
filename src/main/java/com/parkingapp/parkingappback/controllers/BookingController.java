@@ -5,6 +5,7 @@ import com.parkingapp.parkingappback.DTOs.response.BookingReturnDTO;
 import com.parkingapp.parkingappback.entities.Booking;
 import com.parkingapp.parkingappback.services.BookingService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,7 +54,7 @@ public class BookingController {
     Booking booking = bookingService.createBooking(bookingCreateDTO.parkingSpotId(), bookingCreateDTO.vehicleId(),
       bookingCreateDTO.startTime(), bookingCreateDTO.endTime());
 
-    return ResponseEntity.ok(true);
+    return ResponseEntity.status(HttpStatus.CREATED).body(booking);
   }
 
   @PutMapping("/{bookingId}")

@@ -16,6 +16,8 @@ public interface BookingRepository {
 
   List<Booking> findByOwnerFullName(String fullName);
 
+  List<Booking> findByVehicleLicensePlateAndOwnerFullName(String licensePlate, String fullName);
+
   List<Booking> findByEndTime(Instant endTime);
 
   Booking create(Booking booking);

@@ -2,7 +2,8 @@ package com.parkingapp.parkingappback.services.impl;
 
 import com.parkingapp.parkingappback.entities.Owner;
 import com.parkingapp.parkingappback.entities.Vehicle;
-import com.parkingapp.parkingappback.repositories.Impl.VehicleRepositoryImpl;
+import com.parkingapp.parkingappback.exceptions.vehicles.DuplicateLicensePlateException;
+import com.parkingapp.parkingappback.exceptions.vehicles.VehicleNotFoundException;
 import com.parkingapp.parkingappback.repositories.VehicleRepository;
 import com.parkingapp.parkingappback.services.OwnerService;
 import com.parkingapp.parkingappback.services.VehicleService;
@@ -27,13 +28,13 @@ public class VehicleServiceImpl implements VehicleService {
   @Override
   public Vehicle getVehicleById(UUID vehicleId){
     return vehicleRepository.findById(vehicleId)
-      .orElseThrow(() -> new RuntimeException("Cant find vehicle with id: " + vehicleId));
+      .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
   }
 
   @Override
   public Vehicle createVehicle(String licensePlate, String brand, String model, UUID ownerId){
     if (vehicleRepository.existsByLicensePlate(licensePlate.toUpperCase())){
-      throw new RuntimeException("Vehicle with this license plate already exists: " + licensePlate);
+      throw new DuplicateLicensePlateException(licensePlate);
     }
     if (brand == null) brand = "";
     if (model == null) model = "";
@@ -55,11 +56,11 @@ public class VehicleServiceImpl implements VehicleService {
   @Override
   public Vehicle updateVehicle(UUID vehicleId, String licensePlate, String brand, String model, UUID ownerId){
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
-      .orElseThrow(() -> new RuntimeException("Cant find vehicle with id: " + vehicleId));
+      .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
 
     if (!vehicle.getLicensePlate().equals(licensePlate.toUpperCase())
       && vehicleRepository.existsByLicensePlate(licensePlate.toUpperCase())){
-      throw new RuntimeException("Vehicle with this license plate already exists: " + licensePlate);
+      throw new DuplicateLicensePlateException(licensePlate);
     }
     if (brand == null) brand = "";
     if (model == null) model = "";
@@ -76,7 +77,7 @@ public class VehicleServiceImpl implements VehicleService {
   @Override
   public boolean deleteVehicle(UUID vehicleId){
     if (!vehicleRepository.existsById(vehicleId)){
-      throw new RuntimeException("Cant find vehicle with id: " + vehicleId);
+      throw new VehicleNotFoundException(vehicleId);
     }
 
     return vehicleRepository.deleteById(vehicleId);

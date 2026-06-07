@@ -3,6 +3,8 @@ package com.parkingapp.parkingappback.services.impl;
 import com.parkingapp.parkingappback.entities.Booking;
 import com.parkingapp.parkingappback.entities.ParkingSpot;
 import com.parkingapp.parkingappback.entities.Vehicle;
+import com.parkingapp.parkingappback.exceptions.bookings.BookingNotFoundException;
+import com.parkingapp.parkingappback.exceptions.bookings.DuplicateVehicleOrParkingSpotException;
 import com.parkingapp.parkingappback.repositories.BookingRepository;
 import com.parkingapp.parkingappback.services.BookingService;
 import com.parkingapp.parkingappback.services.ParkingSpotService;
@@ -26,6 +28,9 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   public List<Booking> getAllBookings(String licensePlate, String fullName){
+    if (licensePlate != null && !licensePlate.isBlank() && fullName != null && !fullName.isBlank()){
+      return bookingRepository.findByVehicleLicensePlateAndOwnerFullName(licensePlate, fullName);
+    }
     if (licensePlate != null && !licensePlate.isBlank()) return bookingRepository.findByVehicleLicensePlate(licensePlate);
     if (fullName != null && !fullName.isBlank()) return bookingRepository.findByOwnerFullName(fullName);
     return bookingRepository.findAll();
@@ -35,15 +40,10 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public Booking createBooking(UUID parkingSpotId, UUID vehicleId, Instant startTime, Instant endTime){
     if (bookingRepository.existsByParkingSpotIdOrVehicleId(parkingSpotId, vehicleId)){
-      throw new RuntimeException("Booking with for this parking spot or vehicle already exists");
+      throw new DuplicateVehicleOrParkingSpotException(vehicleId, parkingSpotId);
     }
 
     ParkingSpot parkingSpot = parkingSpotService.getParkingSpotById(parkingSpotId);
-
-    if (parkingSpot.isOccupied()){
-      throw new RuntimeException("Parking spot already occupied: " + parkingSpotId);
-    }
-
     parkingSpotService.updateParkingSpotOccupation(parkingSpotId, true);
     Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
     Booking booking = new Booking();
@@ -54,9 +54,11 @@ public class BookingServiceImpl implements BookingService {
     booking.setStartTime(startTime);
     booking.setEndTime(endTime);
     booking.setPaid(false);
-    booking.setCost((int) (100 * (Duration.between(startTime, endTime).toHours())));
+    booking.setCost((int) (100 + 100 * (Duration.between(startTime, endTime).toHours())));
+    if (booking.getCost() <= 0) booking.setCost(100);
     booking.setParkingSpot(parkingSpot);
     booking.setVehicle(vehicle);
+
 
     return bookingRepository.create(booking);
   }
@@ -64,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
   @Override
   public Booking payBooking(UUID bookingId){
     Booking booking = bookingRepository.findById(bookingId)
-      .orElseThrow(() -> new RuntimeException("Cant find booking with id: " + bookingId));
+      .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
     if (booking.isPaid()) return booking;
 
@@ -79,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
     Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
 
     if (optionalBooking.isEmpty()){
-      throw new RuntimeException("Cant find booking with id: " + bookingId);
+      throw new BookingNotFoundException(bookingId);
     }
 
     Booking booking = optionalBooking.get();
@@ -103,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     }).toList();
 
     if (!parkingSpotService.releaseParkingSpots(parkingSpotsIds)){
-      throw new RuntimeException("Couldn`t release parking spots");
+      return false;
     }
 
     List<UUID> bookingIds = bookings.stream().map(Booking::getId).toList();

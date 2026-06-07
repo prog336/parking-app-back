@@ -1,7 +1,8 @@
 package com.parkingapp.parkingappback.services.impl;
 
 import com.parkingapp.parkingappback.entities.Owner;
-import com.parkingapp.parkingappback.repositories.Impl.OwnerRepositoryImpl;
+import com.parkingapp.parkingappback.exceptions.owners.DuplicatePhoneNumberException;
+import com.parkingapp.parkingappback.exceptions.owners.OwnerNotFoundException;
 import com.parkingapp.parkingappback.repositories.OwnerRepository;
 import com.parkingapp.parkingappback.services.OwnerService;
 import lombok.AllArgsConstructor;
@@ -24,13 +25,13 @@ public class OwnerServiceImpl implements OwnerService {
   @Override
   public Owner getOwnerById(UUID ownerId){
     return ownerRepository.findById(ownerId)
-      .orElseThrow(() -> new RuntimeException("Cant find owner with id: " + ownerId));
+      .orElseThrow(() -> new OwnerNotFoundException(ownerId));
   }
 
   @Override
   public Owner createOwner(String fullName, String phoneNumber){
     if (ownerRepository.existsByPhoneNumber(phoneNumber)){
-      throw new RuntimeException("User with this phone number already exists: " + phoneNumber);
+      throw new DuplicatePhoneNumberException(phoneNumber);
     }
 
     Owner owner = new Owner();
@@ -47,10 +48,10 @@ public class OwnerServiceImpl implements OwnerService {
   @Override
   public Owner updateOwner(UUID ownerId, String fullName, String phoneNumber){
     Owner owner = ownerRepository.findById(ownerId)
-      .orElseThrow(() -> new RuntimeException("Cant find owner with id: " + ownerId));
+      .orElseThrow(() -> new OwnerNotFoundException(ownerId));
 
     if (!owner.getPhoneNumber().equals(phoneNumber) && ownerRepository.existsByPhoneNumber(phoneNumber)){
-      throw new RuntimeException("User with this phone number already exists: " + phoneNumber);
+      throw new DuplicatePhoneNumberException(phoneNumber);
     }
 
     owner.setFullName(fullName);
@@ -62,7 +63,7 @@ public class OwnerServiceImpl implements OwnerService {
   @Override
   public boolean deleteOwner(UUID ownerId){
     if (!ownerRepository.existsById(ownerId)){
-      throw new RuntimeException("Cant find owner with id: " + ownerId);
+      throw new OwnerNotFoundException(ownerId);
     }
 
     return ownerRepository.deleteById(ownerId);
