@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict cfPLPAJVvQxnJQGUUy1VbVh82gXdBvVr0gihOfaUtDuJffFrrrBk8yQvuHxoEPs
+\restrict DhBTkBXvrshbmFjxYVcOXjq2CpN4sevyPzqykpkjydOvzg8tFF9ExuVmdBvJJQE
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-07 19:12:20
+-- Started on 2026-06-08 23:03:23
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -116,7 +116,7 @@ c3de0249-f426-4aaa-9262-eb338e552e6e	Кириченко Г.Н.	+79282719917
 d44fdebb-cbaa-4181-8e47-9523f395f9e7	Красный О.М.	+79282719914
 9e0d86c6-e0f5-4533-a9ef-0f8c5dbcb753	Омен М.А.	+79282719913
 275cb0b6-d073-4da9-8be6-4e58c1efc3e6	Позняк М.Е.	+79282719912
-82bf1cc9-588b-41ec-8ce1-19a48b47afa4	Иванов И.И.	89009999090
+82bf1cc9-588b-41ec-8ce1-19a48b47afa4	Иванов И.И.	+79009999090
 e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3	Городилов Д.В.	+79282719911
 \.
 
@@ -131,9 +131,9 @@ COPY public.parking_spots (id, is_occupied, spot_number) FROM stdin;
 e3cf1f15-cf7b-4e01-b9ca-07d9db405d21	f	И102
 76fb3d83-afe2-449b-8ed3-f394ff81bf57	t	A5
 06cb2254-782b-4747-94cf-3bc504a367ce	f	В4-05
-2c4bd2e2-7485-4c61-b278-a585d0123149	t	F5
 84bc0d10-d1c0-482d-ac6e-6022c6d39b2c	t	П35
 c8d8200e-49f2-4562-9643-ee7434acbd0c	f	F4
+2c4bd2e2-7485-4c61-b278-a585d0123149	t	F5
 \.
 
 
@@ -146,11 +146,11 @@ c8d8200e-49f2-4562-9643-ee7434acbd0c	f	F4
 COPY public.vehicles (id, brand, license_plate, model, owner_id) FROM stdin;
 854dd4bc-3551-4ab6-81d1-7d95558dbb73		GRGGR		d44fdebb-cbaa-4181-8e47-9523f395f9e7
 63141f73-4738-461f-a574-64f02cd17e2b	Haval	WE 306BW	M6	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
-2df0818d-4666-47e9-aec7-64ce238f5216	Mazda	А111АА	Miata	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
-8797870b-4d46-4282-9613-b08d96894a68	Лада	Н512ОМ	Гранта	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
 4592e40b-63cc-48a7-bd18-7f9521a17f6c	Mercedes	DO 6543 GE	GLC	65f08b77-afc0-4681-907f-b469f4fab235
-216e10c9-a4f9-4e98-b373-f0e9f1c69f55	БЕЛАЗ	К212АР	7555	2e64862f-7154-498f-b029-188d1d5de8aa
-4ae9af42-d2d6-475f-aa89-7cc665473775	HONDA	В123ВА	N BOX	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
+2df0818d-4666-47e9-aec7-64ce238f5216	Mazda	А111АА 123	Miata	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
+4ae9af42-d2d6-475f-aa89-7cc665473775	HONDA	В123ВА 93	N BOX	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
+8797870b-4d46-4282-9613-b08d96894a68	Лада	Н512ОМ 761	Гранта	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
+216e10c9-a4f9-4e98-b373-f0e9f1c69f55	БЕЛАЗ	К212АР 196	7555	2e64862f-7154-498f-b029-188d1d5de8aa
 \.
 
 
@@ -302,11 +302,11 @@ ALTER TABLE ONLY public.bookings
     ADD CONSTRAINT fkfaocmygpfumie1lf090rnk9lt FOREIGN KEY (parking_spot_id) REFERENCES public.parking_spots(id) ON DELETE CASCADE;
 
 
--- Completed on 2026-06-07 19:12:20
+-- Completed on 2026-06-08 23:03:24
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict cfPLPAJVvQxnJQGUUy1VbVh82gXdBvVr0gihOfaUtDuJffFrrrBk8yQvuHxoEPs
+\unrestrict DhBTkBXvrshbmFjxYVcOXjq2CpN4sevyPzqykpkjydOvzg8tFF9ExuVmdBvJJQE
 
