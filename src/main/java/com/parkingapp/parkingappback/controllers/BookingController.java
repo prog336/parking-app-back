@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,17 +39,6 @@ public class BookingController {
 
   @PostMapping
   public ResponseEntity<?> createBooking(@RequestBody BookingCreateDTO bookingCreateDTO){
-    if (bookingCreateDTO.startTime() == null || bookingCreateDTO.endTime() == null
-    || bookingCreateDTO.parkingSpotId() == null || bookingCreateDTO.vehicleId() == null){
-      return ResponseEntity.badRequest().body("Start time, end time, spot id and vehicle id should not be empty");
-    }
-    if (bookingCreateDTO.endTime().isBefore(Instant.now())){
-      return ResponseEntity.badRequest().body("End time cannot be earlier than now");
-    }
-    if (bookingCreateDTO.endTime().isBefore(bookingCreateDTO.startTime())){
-      return ResponseEntity.badRequest().body("End time cannot be earlier than start time");
-    }
-
     Booking booking = bookingService.createBooking(bookingCreateDTO.parkingSpotId(), bookingCreateDTO.vehicleId(),
       bookingCreateDTO.startTime(), bookingCreateDTO.endTime());
 

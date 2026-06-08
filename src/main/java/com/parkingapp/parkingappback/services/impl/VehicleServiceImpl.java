@@ -2,12 +2,14 @@ package com.parkingapp.parkingappback.services.impl;
 
 import com.parkingapp.parkingappback.entities.Owner;
 import com.parkingapp.parkingappback.entities.Vehicle;
+import com.parkingapp.parkingappback.exceptions.ValidationException;
 import com.parkingapp.parkingappback.exceptions.vehicles.DuplicateLicensePlateException;
 import com.parkingapp.parkingappback.exceptions.vehicles.VehicleNotFoundException;
 import com.parkingapp.parkingappback.repositories.VehicleRepository;
 import com.parkingapp.parkingappback.services.OwnerService;
 import com.parkingapp.parkingappback.services.VehicleService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +35,7 @@ public class VehicleServiceImpl implements VehicleService {
 
   @Override
   public Vehicle createVehicle(String licensePlate, String brand, String model, UUID ownerId){
+    validateVehicleData(licensePlate);
     if (vehicleRepository.existsByLicensePlate(licensePlate.toUpperCase())){
       throw new DuplicateLicensePlateException(licensePlate);
     }
@@ -55,6 +58,7 @@ public class VehicleServiceImpl implements VehicleService {
 
   @Override
   public Vehicle updateVehicle(UUID vehicleId, String licensePlate, String brand, String model, UUID ownerId){
+    validateVehicleData(licensePlate);
     Vehicle vehicle = vehicleRepository.findById(vehicleId)
       .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
 
@@ -81,5 +85,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     return vehicleRepository.deleteById(vehicleId);
+  }
+
+  private void validateVehicleData(String licensePlate){
+    if (licensePlate == null || licensePlate.isBlank()) {
+      throw new ValidationException("License plate should not be empty");
+    }
   }
 }

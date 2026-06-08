@@ -1,6 +1,7 @@
 package com.parkingapp.parkingappback.services.impl;
 
 import com.parkingapp.parkingappback.entities.ParkingSpot;
+import com.parkingapp.parkingappback.exceptions.ValidationException;
 import com.parkingapp.parkingappback.exceptions.parkingSpots.DuplicateSpotNumberException;
 import com.parkingapp.parkingappback.exceptions.parkingSpots.ParkingSpotAlreadyOccupiedException;
 import com.parkingapp.parkingappback.exceptions.parkingSpots.ParkingSpotNotFoundException;
@@ -31,6 +32,8 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
 
   @Override
   public ParkingSpot createParkingSpot(String spotNumber){
+    validateParkingSpotData(spotNumber);
+
     if (parkingSpotRepository.existsBySpotNumber(spotNumber)){
       throw new DuplicateSpotNumberException(spotNumber);
     }
@@ -48,6 +51,7 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
 
   @Override
   public ParkingSpot updateParkingSpotNumber(UUID parkingSpotId, String spotNumber){
+    validateParkingSpotData(spotNumber);
     ParkingSpot parkingSpot = parkingSpotRepository.findById(parkingSpotId)
       .orElseThrow(() -> new ParkingSpotNotFoundException(parkingSpotId));
 
@@ -87,5 +91,11 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
     }
 
     return parkingSpotRepository.deleteById(parkingSpotId);
+  }
+
+  private void validateParkingSpotData(String spotNumber){
+    if (spotNumber == null || spotNumber.isBlank()){
+      throw new ValidationException("Spot number should not be empty");
+    }
   }
 }

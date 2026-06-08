@@ -26,10 +26,6 @@ public class ParkingSpotController {
 
   @PostMapping
   public ResponseEntity<?> createParkingSpot(@RequestBody ParkingSpotCreateDTO parkingSpotCreateDTO){
-    if (parkingSpotCreateDTO.spotNumber() == null || parkingSpotCreateDTO.spotNumber().isBlank()){
-      return ResponseEntity.badRequest().body("Spot number should not be empty");
-    }
-
     ParkingSpot parkingSpot = parkingSpotService.createParkingSpot(parkingSpotCreateDTO.spotNumber());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpot);
@@ -38,14 +34,9 @@ public class ParkingSpotController {
   @PutMapping("/{parkingSpotId}")
   public ResponseEntity<?> updateParkingSpot(
     @PathVariable UUID parkingSpotId,
-    @RequestBody ParkingSpotCreateDTO parkingSpotCreateDTO
+    @RequestBody ParkingSpotCreateDTO parkingSpotUpdateDTO
   ){
-    if (parkingSpotCreateDTO.spotNumber() == null || parkingSpotCreateDTO.spotNumber().isBlank()){
-      return ResponseEntity.badRequest().body("Spot number should not be empty");
-    }
-
-    ParkingSpot parkingSpot = parkingSpotService.updateParkingSpotNumber(parkingSpotId,
-      parkingSpotCreateDTO.spotNumber());
+    ParkingSpot parkingSpot = parkingSpotService.updateParkingSpotNumber(parkingSpotId, parkingSpotUpdateDTO.spotNumber());
 
     return ResponseEntity.ok(parkingSpot);
   }

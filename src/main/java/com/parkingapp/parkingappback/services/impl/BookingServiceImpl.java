@@ -3,6 +3,7 @@ package com.parkingapp.parkingappback.services.impl;
 import com.parkingapp.parkingappback.entities.Booking;
 import com.parkingapp.parkingappback.entities.ParkingSpot;
 import com.parkingapp.parkingappback.entities.Vehicle;
+import com.parkingapp.parkingappback.exceptions.ValidationException;
 import com.parkingapp.parkingappback.exceptions.bookings.BookingNotFoundException;
 import com.parkingapp.parkingappback.exceptions.bookings.DuplicateVehicleOrParkingSpotException;
 import com.parkingapp.parkingappback.repositories.BookingRepository;
@@ -39,6 +40,15 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional
   public Booking createBooking(UUID parkingSpotId, UUID vehicleId, Instant startTime, Instant endTime){
+    if (startTime == null || endTime == null || parkingSpotId == null || vehicleId == null){
+      throw new ValidationException("Start time, end time, spot id and vehicle id should not be empty");
+    }
+    if (endTime.isBefore(Instant.now())){
+      throw new ValidationException("End time cannot be earlier than now");
+    }
+    if (endTime.isBefore(startTime)){
+      throw new ValidationException("End time cannot be earlier than start time");
+    }
     if (bookingRepository.existsByParkingSpotIdOrVehicleId(parkingSpotId, vehicleId)){
       throw new DuplicateVehicleOrParkingSpotException(vehicleId, parkingSpotId);
     }

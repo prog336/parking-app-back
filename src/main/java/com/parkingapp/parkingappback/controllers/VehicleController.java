@@ -26,10 +26,6 @@ public class VehicleController {
 
   @PostMapping
   public ResponseEntity<?> createVehicle(@RequestBody VehicleCreateDTO vehicleCreateDTO) {
-    if (vehicleCreateDTO.licensePlate() == null || vehicleCreateDTO.licensePlate().isBlank()) {
-      return ResponseEntity.badRequest().body("License plate should not be empty");
-    }
-
     Vehicle vehicle = vehicleService.createVehicle(vehicleCreateDTO.licensePlate(), vehicleCreateDTO.brand(),
       vehicleCreateDTO.model(), vehicleCreateDTO.ownerId());
 
@@ -38,10 +34,6 @@ public class VehicleController {
 
   @PutMapping("/{vehicleId}")
   public ResponseEntity<?> updateVehicle(@PathVariable UUID vehicleId, @RequestBody VehicleCreateDTO vehicleUpdateDTO) {
-    if (vehicleUpdateDTO.licensePlate() == null || vehicleUpdateDTO.licensePlate().isBlank()) {
-      return ResponseEntity.badRequest().body("License plate should not be empty");
-    }
-
     Vehicle vehicle = vehicleService.updateVehicle(vehicleId, vehicleUpdateDTO.licensePlate(),
       vehicleUpdateDTO.brand(), vehicleUpdateDTO.model(), vehicleUpdateDTO.ownerId());
 

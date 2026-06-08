@@ -1,6 +1,7 @@
 package com.parkingapp.parkingappback.services.impl;
 
 import com.parkingapp.parkingappback.entities.Owner;
+import com.parkingapp.parkingappback.exceptions.ValidationException;
 import com.parkingapp.parkingappback.exceptions.owners.DuplicatePhoneNumberException;
 import com.parkingapp.parkingappback.exceptions.owners.OwnerNotFoundException;
 import com.parkingapp.parkingappback.repositories.OwnerRepository;
@@ -30,8 +31,11 @@ public class OwnerServiceImpl implements OwnerService {
 
   @Override
   public Owner createOwner(String fullName, String phoneNumber){
-    if (ownerRepository.existsByPhoneNumber(phoneNumber)){
-      throw new DuplicatePhoneNumberException(phoneNumber);
+    String formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+    validateOwnerData(fullName, formattedPhoneNumber);
+
+    if (ownerRepository.existsByPhoneNumber(formattedPhoneNumber)){
+      throw new DuplicatePhoneNumberException(formattedPhoneNumber);
     }
 
     Owner owner = new Owner();
@@ -40,22 +44,25 @@ public class OwnerServiceImpl implements OwnerService {
     while (ownerRepository.existsById(owner.getId()));
 
     owner.setFullName(fullName);
-    owner.setPhoneNumber(phoneNumber);
+    owner.setPhoneNumber(formattedPhoneNumber);
 
     return ownerRepository.create(owner);
   }
 
   @Override
   public Owner updateOwner(UUID ownerId, String fullName, String phoneNumber){
+    String formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+    validateOwnerData(fullName, formattedPhoneNumber);
+
     Owner owner = ownerRepository.findById(ownerId)
       .orElseThrow(() -> new OwnerNotFoundException(ownerId));
 
-    if (!owner.getPhoneNumber().equals(phoneNumber) && ownerRepository.existsByPhoneNumber(phoneNumber)){
-      throw new DuplicatePhoneNumberException(phoneNumber);
+    if (!owner.getPhoneNumber().equals(formattedPhoneNumber) && ownerRepository.existsByPhoneNumber(formattedPhoneNumber)){
+      throw new DuplicatePhoneNumberException(formattedPhoneNumber);
     }
 
     owner.setFullName(fullName);
-    owner.setPhoneNumber(phoneNumber);
+    owner.setPhoneNumber(formattedPhoneNumber);
 
     return ownerRepository.update(owner);
   }
@@ -67,5 +74,28 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     return ownerRepository.deleteById(ownerId);
+  }
+
+  private String formatPhoneNumber(String phoneNumber){
+    String formattedPhoneNumber = phoneNumber.replaceAll("[^\\d+]", "");
+
+    if (formattedPhoneNumber.startsWith("8")){
+      formattedPhoneNumber = formattedPhoneNumber.replaceFirst("8", "+7");
+    }
+
+    return formattedPhoneNumber;
+  }
+
+  private void validateOwnerData(String fullName, String phoneNumber){
+    if (fullName == null || phoneNumber == null || fullName.isBlank() || phoneNumber.isBlank()) {
+      throw new  ValidationException("Full name and phone should not be empty");
+    }
+    if (fullName.length() < 2) {
+      throw new  ValidationException("Full name should be at least 2 characters long");
+    }
+    String phoneRegex = "^(\\+7|8)?\\d{10}$";
+    if (!phoneNumber.matches(phoneRegex)) {
+      throw new  ValidationException("Wrong phone number format");
+    }
   }
 }
