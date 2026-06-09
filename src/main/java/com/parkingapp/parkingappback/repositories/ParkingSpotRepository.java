@@ -17,8 +17,6 @@ public interface ParkingSpotRepository {
 
   boolean deleteById(UUID id);
 
-  boolean releaseAllByIds(List<UUID> ids);
-
   boolean existsById(UUID id);
 
   boolean existsBySpotNumber(String spotNumber);

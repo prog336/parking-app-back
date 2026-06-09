@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -84,18 +83,5 @@ public class ParkingSpotRepositoryImpl implements ParkingSpotRepository {
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class, spotNumber);
 
     return count != null && count > 0;
-  }
-
-  @Override
-  public boolean releaseAllByIds(List<UUID> idsList){
-    if (idsList == null || idsList.isEmpty()) {
-      return false;
-    }
-
-    String ids = String.join(",", Collections.nCopies(idsList.size(), "?"));
-    String sql = String.format("UPDATE parking_spots SET is_occupied = false WHERE id IN (%s)", ids);
-    int affectedRowsCount = jdbcTemplate.update(sql, idsList.toArray());
-
-    return affectedRowsCount > 0;
   }
 }

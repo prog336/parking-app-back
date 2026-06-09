@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict DhBTkBXvrshbmFjxYVcOXjq2CpN4sevyPzqykpkjydOvzg8tFF9ExuVmdBvJJQE
+\restrict UVrZl6pnYfzcaDwLHNhOEX3zd19GejtzRZsCuYaTfqVnnKGkwgRj0AgIILVKx0S
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-08 23:03:23
+-- Started on 2026-06-09 17:14:11
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,6 +20,25 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- TOC entry 223 (class 1255 OID 38773)
+-- Name: release_parking_spot(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.release_parking_spot() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE parking_spots
+    SET is_occupied = false
+    WHERE id = OLD.parking_spot_id;
+    RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION public.release_parking_spot() OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -89,20 +108,20 @@ CREATE TABLE public.vehicles (
 ALTER TABLE public.vehicles OWNER TO postgres;
 
 --
--- TOC entry 4940 (class 0 OID 38619)
+-- TOC entry 4942 (class 0 OID 38619)
 -- Dependencies: 219
 -- Data for Name: bookings; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.bookings (id, cost, end_time, is_paid, start_time, parking_spot_id, vehicle_id) FROM stdin;
-c1408555-761a-45a8-b44e-1b3c96283e38	16800	2026-06-08 00:00:00+03	f	2026-06-01 00:00:00+03	76fb3d83-afe2-449b-8ed3-f394ff81bf57	2df0818d-4666-47e9-aec7-64ce238f5216
 a76d263c-9988-4bde-b217-121657ad32f1	17300	2026-06-14 00:00:00+03	f	2026-06-07 00:00:00+03	84bc0d10-d1c0-482d-ac6e-6022c6d39b2c	8797870b-4d46-4282-9613-b08d96894a68
-f938d6d4-3b01-477e-bb21-049c9ef884ef	2900	2026-06-08 00:00:00+03	t	2026-06-07 00:00:00+03	2c4bd2e2-7485-4c61-b278-a585d0123149	4ae9af42-d2d6-475f-aa89-7cc665473775
+f9993307-c151-4b4e-8f52-da56ed854fa2	2500	2026-06-10 00:00:00+03	f	2026-06-09 00:00:00+03	76fb3d83-afe2-449b-8ed3-f394ff81bf57	bf4a0904-63be-4989-87ae-6cea10eda0e9
+aa6e5bdd-3ede-4603-b302-95c2ad4a4ee6	2500	2026-06-10 00:00:00+03	t	2026-06-09 00:00:00+03	c8d8200e-49f2-4562-9643-ee7434acbd0c	4ae9af42-d2d6-475f-aa89-7cc665473775
 \.
 
 
 --
--- TOC entry 4941 (class 0 OID 38631)
+-- TOC entry 4943 (class 0 OID 38631)
 -- Dependencies: 220
 -- Data for Name: owners; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -122,23 +141,24 @@ e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3	Городилов Д.В.	+79282719911
 
 
 --
--- TOC entry 4942 (class 0 OID 38641)
+-- TOC entry 4944 (class 0 OID 38641)
 -- Dependencies: 221
 -- Data for Name: parking_spots; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.parking_spots (id, is_occupied, spot_number) FROM stdin;
-e3cf1f15-cf7b-4e01-b9ca-07d9db405d21	f	И102
+d795bad6-0810-468e-8211-57654602c3c6	f	Т1
 76fb3d83-afe2-449b-8ed3-f394ff81bf57	t	A5
+c8d8200e-49f2-4562-9643-ee7434acbd0c	t	F4
+e3cf1f15-cf7b-4e01-b9ca-07d9db405d21	f	И102
 06cb2254-782b-4747-94cf-3bc504a367ce	f	В4-05
 84bc0d10-d1c0-482d-ac6e-6022c6d39b2c	t	П35
-c8d8200e-49f2-4562-9643-ee7434acbd0c	f	F4
-2c4bd2e2-7485-4c61-b278-a585d0123149	t	F5
+2c4bd2e2-7485-4c61-b278-a585d0123149	f	F5
 \.
 
 
 --
--- TOC entry 4943 (class 0 OID 38651)
+-- TOC entry 4945 (class 0 OID 38651)
 -- Dependencies: 222
 -- Data for Name: vehicles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -147,15 +167,15 @@ COPY public.vehicles (id, brand, license_plate, model, owner_id) FROM stdin;
 854dd4bc-3551-4ab6-81d1-7d95558dbb73		GRGGR		d44fdebb-cbaa-4181-8e47-9523f395f9e7
 63141f73-4738-461f-a574-64f02cd17e2b	Haval	WE 306BW	M6	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
 4592e40b-63cc-48a7-bd18-7f9521a17f6c	Mercedes	DO 6543 GE	GLC	65f08b77-afc0-4681-907f-b469f4fab235
-2df0818d-4666-47e9-aec7-64ce238f5216	Mazda	А111АА 123	Miata	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
 4ae9af42-d2d6-475f-aa89-7cc665473775	HONDA	В123ВА 93	N BOX	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
 8797870b-4d46-4282-9613-b08d96894a68	Лада	Н512ОМ 761	Гранта	82bf1cc9-588b-41ec-8ce1-19a48b47afa4
 216e10c9-a4f9-4e98-b373-f0e9f1c69f55	БЕЛАЗ	К212АР 196	7555	2e64862f-7154-498f-b029-188d1d5de8aa
+bf4a0904-63be-4989-87ae-6cea10eda0e9	Mazda	А111АА 123	Miata	e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3
 \.
 
 
 --
--- TOC entry 4768 (class 2606 OID 38630)
+-- TOC entry 4769 (class 2606 OID 38630)
 -- Name: bookings bookings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -164,7 +184,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- TOC entry 4778 (class 2606 OID 38640)
+-- TOC entry 4779 (class 2606 OID 38640)
 -- Name: owners owners_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -173,7 +193,7 @@ ALTER TABLE ONLY public.owners
 
 
 --
--- TOC entry 4782 (class 2606 OID 38650)
+-- TOC entry 4783 (class 2606 OID 38650)
 -- Name: parking_spots parking_spots_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -182,7 +202,7 @@ ALTER TABLE ONLY public.parking_spots
 
 
 --
--- TOC entry 4787 (class 2606 OID 38670)
+-- TOC entry 4788 (class 2606 OID 38670)
 -- Name: vehicles uk9vovnbiegxevdhqfcwvp2g8pj; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -191,7 +211,7 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- TOC entry 4773 (class 2606 OID 38664)
+-- TOC entry 4774 (class 2606 OID 38664)
 -- Name: bookings uka1b78amwx498s9lyj6r692q3r; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -200,7 +220,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- TOC entry 4775 (class 2606 OID 38662)
+-- TOC entry 4776 (class 2606 OID 38662)
 -- Name: bookings ukkody4wdt4d2fpfjy2sosyt15j; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -209,7 +229,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- TOC entry 4784 (class 2606 OID 38668)
+-- TOC entry 4785 (class 2606 OID 38668)
 -- Name: parking_spots ukrnquqnwcq3cdjb1ulmcm3h4l5; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -218,7 +238,7 @@ ALTER TABLE ONLY public.parking_spots
 
 
 --
--- TOC entry 4780 (class 2606 OID 38666)
+-- TOC entry 4781 (class 2606 OID 38666)
 -- Name: owners uktbr2prlcpj2g7rj3cmp0fdx7y; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -227,7 +247,7 @@ ALTER TABLE ONLY public.owners
 
 
 --
--- TOC entry 4789 (class 2606 OID 38660)
+-- TOC entry 4790 (class 2606 OID 38660)
 -- Name: vehicles vehicles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -236,7 +256,7 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- TOC entry 4769 (class 1259 OID 38769)
+-- TOC entry 4770 (class 1259 OID 38769)
 -- Name: idx_bookings_end_time; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -244,7 +264,7 @@ CREATE INDEX idx_bookings_end_time ON public.bookings USING btree (end_time);
 
 
 --
--- TOC entry 4770 (class 1259 OID 38767)
+-- TOC entry 4771 (class 1259 OID 38767)
 -- Name: idx_bookings_parking_spot_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -252,7 +272,7 @@ CREATE INDEX idx_bookings_parking_spot_id ON public.bookings USING btree (parkin
 
 
 --
--- TOC entry 4771 (class 1259 OID 38768)
+-- TOC entry 4772 (class 1259 OID 38768)
 -- Name: idx_bookings_vehicle_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -260,7 +280,7 @@ CREATE INDEX idx_bookings_vehicle_id ON public.bookings USING btree (vehicle_id)
 
 
 --
--- TOC entry 4776 (class 1259 OID 38770)
+-- TOC entry 4777 (class 1259 OID 38770)
 -- Name: idx_owners_full_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -268,7 +288,7 @@ CREATE INDEX idx_owners_full_name ON public.owners USING btree (full_name);
 
 
 --
--- TOC entry 4785 (class 1259 OID 38771)
+-- TOC entry 4786 (class 1259 OID 38771)
 -- Name: idx_vehicles_owner_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -276,7 +296,15 @@ CREATE INDEX idx_vehicles_owner_id ON public.vehicles USING btree (owner_id);
 
 
 --
--- TOC entry 4792 (class 2606 OID 38681)
+-- TOC entry 4794 (class 2620 OID 38774)
+-- Name: bookings trigger_release_parking_spot; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER trigger_release_parking_spot BEFORE DELETE ON public.bookings FOR EACH ROW EXECUTE FUNCTION public.release_parking_spot();
+
+
+--
+-- TOC entry 4793 (class 2606 OID 38681)
 -- Name: vehicles fk9mro2yegbtqmqwueeq9lyrmrj; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -285,7 +313,7 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- TOC entry 4790 (class 2606 OID 38676)
+-- TOC entry 4791 (class 2606 OID 38676)
 -- Name: bookings fkc0062bk3bchs55diw805avxq; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -294,7 +322,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- TOC entry 4791 (class 2606 OID 38671)
+-- TOC entry 4792 (class 2606 OID 38671)
 -- Name: bookings fkfaocmygpfumie1lf090rnk9lt; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -302,11 +330,11 @@ ALTER TABLE ONLY public.bookings
     ADD CONSTRAINT fkfaocmygpfumie1lf090rnk9lt FOREIGN KEY (parking_spot_id) REFERENCES public.parking_spots(id) ON DELETE CASCADE;
 
 
--- Completed on 2026-06-08 23:03:24
+-- Completed on 2026-06-09 17:14:12
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict DhBTkBXvrshbmFjxYVcOXjq2CpN4sevyPzqykpkjydOvzg8tFF9ExuVmdBvJJQE
+\unrestrict UVrZl6pnYfzcaDwLHNhOEX3zd19GejtzRZsCuYaTfqVnnKGkwgRj0AgIILVKx0S
 

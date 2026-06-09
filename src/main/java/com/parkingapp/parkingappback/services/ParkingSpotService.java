@@ -16,7 +16,5 @@ public interface ParkingSpotService {
 
   ParkingSpot updateParkingSpotOccupation(UUID parkingSpotId, boolean isOccupied);
 
-  boolean releaseParkingSpots(List<UUID> parkingSpotIds);
-
   boolean deleteParkingSpot(UUID vehicleId);
 }

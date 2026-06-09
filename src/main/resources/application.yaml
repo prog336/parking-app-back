@@ -12,3 +12,10 @@ spring:
     show-sql: true
     properties:
       format-sql: true
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: DEBUG

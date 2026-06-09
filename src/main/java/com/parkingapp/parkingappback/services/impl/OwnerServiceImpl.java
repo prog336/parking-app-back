@@ -1,12 +1,18 @@
 package com.parkingapp.parkingappback.services.impl;
 
 import com.parkingapp.parkingappback.entities.Owner;
+import com.parkingapp.parkingappback.events.OwnerChangedEvent;
+import com.parkingapp.parkingappback.events.OwnerDeletedEvent;
 import com.parkingapp.parkingappback.exceptions.ValidationException;
 import com.parkingapp.parkingappback.exceptions.owners.DuplicatePhoneNumberException;
 import com.parkingapp.parkingappback.exceptions.owners.OwnerNotFoundException;
 import com.parkingapp.parkingappback.repositories.OwnerRepository;
 import com.parkingapp.parkingappback.services.OwnerService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,20 +22,27 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
   private final OwnerRepository ownerRepository;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Override
+  @Cacheable(value = "owners")
   public List<Owner> getAllOwners(String fullName){
     if (fullName == null || fullName.isBlank()) return ownerRepository.findAll();
     return ownerRepository.findByFullName(fullName);
   }
 
   @Override
+  @Cacheable(value = "ownerById", key = "#ownerId")
   public Owner getOwnerById(UUID ownerId){
     return ownerRepository.findById(ownerId)
       .orElseThrow(() -> new OwnerNotFoundException(ownerId));
   }
 
   @Override
+  @Caching(evict = {
+    @CacheEvict(value = "owners", allEntries = true),
+    @CacheEvict(value = "ownerById", key = "#result.id")
+  })
   public Owner createOwner(String fullName, String phoneNumber){
     String formattedPhoneNumber = formatPhoneNumber(phoneNumber);
     validateOwnerData(fullName, formattedPhoneNumber);
@@ -50,6 +63,10 @@ public class OwnerServiceImpl implements OwnerService {
   }
 
   @Override
+  @Caching(evict = {
+    @CacheEvict(value = "owners", allEntries = true),
+    @CacheEvict(value = "ownerById", key = "#ownerId")
+  })
   public Owner updateOwner(UUID ownerId, String fullName, String phoneNumber){
     String formattedPhoneNumber = formatPhoneNumber(phoneNumber);
     validateOwnerData(fullName, formattedPhoneNumber);
@@ -63,17 +80,28 @@ public class OwnerServiceImpl implements OwnerService {
 
     owner.setFullName(fullName);
     owner.setPhoneNumber(formattedPhoneNumber);
+    Owner updatedOwner = ownerRepository.update(owner);
+    eventPublisher.publishEvent(new OwnerChangedEvent(this));
 
-    return ownerRepository.update(owner);
+    return updatedOwner;
   }
 
   @Override
+  @Caching(evict = {
+    @CacheEvict(value = "owners", allEntries = true),
+    @CacheEvict(value = "ownerById", key = "#ownerId"),
+  })
   public boolean deleteOwner(UUID ownerId){
     if (!ownerRepository.existsById(ownerId)){
       throw new OwnerNotFoundException(ownerId);
     }
 
-    return ownerRepository.deleteById(ownerId);
+    boolean deleted = ownerRepository.deleteById(ownerId);
+    if (deleted){
+      eventPublisher.publishEvent(new OwnerDeletedEvent(this));
+    }
+
+    return deleted;
   }
 
   private String formatPhoneNumber(String phoneNumber){

@@ -1,7 +1,6 @@
 package com.parkingapp.parkingappback.services;
 
 import com.parkingapp.parkingappback.entities.Booking;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -16,6 +15,5 @@ public interface BookingService {
 
   boolean deleteBooking(UUID bookingId);
 
-  @Transactional
   boolean deleteExpiredBookings();
 }

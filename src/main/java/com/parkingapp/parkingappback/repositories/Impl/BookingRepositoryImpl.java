@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -132,34 +131,13 @@ public class BookingRepositoryImpl implements BookingRepository {
       SELECT b.id as booking_id, b.start_time, b.end_time, b.is_paid, b.cost, ps.id as parking_spot_id, ps.spot_number, ps.is_occupied, v.id as vehicle_id, v.license_plate, v.brand, v.model, o.id as owner_id, o.full_name, o.phone_number
       FROM bookings b
       JOIN parking_spots ps ON b.parking_spot_id = ps.id
-      JOIN vehicles v ON b.vehicle.id = v.id
+      JOIN vehicles v ON b.vehicle_id = v.id
       JOIN owners o ON v.owner_id = o.id
       WHERE UPPER(v.license_plate) LIKE UPPER(?) AND LOWER(o.full_name) LIKE LOWER(?)
       ORDER BY o.full_name
       """;
     
     return jdbcTemplate.query(sql,(rs, rowNum) -> mapBookings(rs));
-  }
-
-  @Override
-  public List<Booking> findByEndTime(Instant endTime){
-    String sql = """
-      SELECT b.id as booking_id, ps.id as parking_spot_id
-      FROM bookings b
-      JOIN parking_spots ps ON b.parking_spot_id = ps.id
-      WHERE b.end_time < ?
-      """;
-
-    return jdbcTemplate.query(sql, (rs, rowNum) -> {
-      ParkingSpot parkingSpot = new ParkingSpot();
-      parkingSpot.setId(rs.getObject("parking_spot_id", UUID.class));
-
-      Booking booking = new Booking();
-      booking.setId(rs.getObject("booking_id", UUID.class));
-      booking.setParkingSpot(parkingSpot);
-
-      return booking;
-    }, Timestamp.from(endTime));
   }
 
   @Override
@@ -202,16 +180,11 @@ public class BookingRepositoryImpl implements BookingRepository {
   }
 
   @Override
-  public boolean deleteAllByIds(List<UUID> idsList){
-    if (idsList == null || idsList.isEmpty()) {
-      return false;
-    }
+  public boolean deleteExpired(){
+    String sql = "DELETE FROM bookings WHERE end_time < ?";
+    jdbcTemplate.update(sql, Timestamp.from(Instant.now()));
 
-    String ids = String.join(",", Collections.nCopies(idsList.size(), "?"));
-    String sql = String.format("DELETE FROM bookings WHERE id IN (%s)", ids);
-    int affectedRowsCount = jdbcTemplate.update(sql, idsList.toArray());
-
-    return affectedRowsCount > 0;
+    return true;
   }
 
   @Override
