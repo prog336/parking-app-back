@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict UVrZl6pnYfzcaDwLHNhOEX3zd19GejtzRZsCuYaTfqVnnKGkwgRj0AgIILVKx0S
+\restrict Z7ibq70K8sXHbLAtuDNFplZa0IimlffJ5bOczkYFgzIDEkO5mm3OIDMI1caEbWN
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-09 17:14:11
+-- Started on 2026-06-12 02:34:34
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -147,13 +147,14 @@ e31f7e98-5bfc-4fcf-a096-4ab7e276c3d3	Городилов Д.В.	+79282719911
 --
 
 COPY public.parking_spots (id, is_occupied, spot_number) FROM stdin;
-d795bad6-0810-468e-8211-57654602c3c6	f	Т1
 76fb3d83-afe2-449b-8ed3-f394ff81bf57	t	A5
 c8d8200e-49f2-4562-9643-ee7434acbd0c	t	F4
 e3cf1f15-cf7b-4e01-b9ca-07d9db405d21	f	И102
 06cb2254-782b-4747-94cf-3bc504a367ce	f	В4-05
 84bc0d10-d1c0-482d-ac6e-6022c6d39b2c	t	П35
+2723c580-da9b-4ec2-ace3-a05cb91459ad	f	D5
 2c4bd2e2-7485-4c61-b278-a585d0123149	f	F5
+d72ca75b-e2f6-4d8f-b28f-1894ea500c7a	f	Т1
 \.
 
 
@@ -330,11 +331,11 @@ ALTER TABLE ONLY public.bookings
     ADD CONSTRAINT fkfaocmygpfumie1lf090rnk9lt FOREIGN KEY (parking_spot_id) REFERENCES public.parking_spots(id) ON DELETE CASCADE;
 
 
--- Completed on 2026-06-09 17:14:12
+-- Completed on 2026-06-12 02:34:35
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict UVrZl6pnYfzcaDwLHNhOEX3zd19GejtzRZsCuYaTfqVnnKGkwgRj0AgIILVKx0S
+\unrestrict Z7ibq70K8sXHbLAtuDNFplZa0IimlffJ5bOczkYFgzIDEkO5mm3OIDMI1caEbWN
 

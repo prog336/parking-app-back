@@ -65,7 +65,7 @@ public class BookingRepositoryImpl implements BookingRepository {
       JOIN parking_spots ps ON b.parking_spot_id = ps.id
       JOIN vehicles v ON b.vehicle_id = v.id
       JOIN owners o ON v.owner_id = o.id
-      ORDER BY o.full_name
+      ORDER BY b.end_time
       """;
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapBookings(rs));
@@ -101,7 +101,7 @@ public class BookingRepositoryImpl implements BookingRepository {
       JOIN vehicles v ON b.vehicle_id = v.id
       JOIN owners o ON v.owner_id = o.id
       WHERE UPPER(v.license_plate) LIKE UPPER(?)
-      ORDER BY o.full_name
+      ORDER BY b.end_time
       """;
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapBookings(rs), "%" + licensePlate + "%");
@@ -119,7 +119,7 @@ public class BookingRepositoryImpl implements BookingRepository {
       JOIN vehicles v ON b.vehicle_id = v.id
       JOIN owners o ON v.owner_id = o.id
       WHERE LOWER(o.full_name) LIKE LOWER(?)
-      ORDER BY o.full_name
+      ORDER BY b.end_time
       """;
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> mapBookings(rs), "%" + fullName + "%");
@@ -134,7 +134,7 @@ public class BookingRepositoryImpl implements BookingRepository {
       JOIN vehicles v ON b.vehicle_id = v.id
       JOIN owners o ON v.owner_id = o.id
       WHERE UPPER(v.license_plate) LIKE UPPER(?) AND LOWER(o.full_name) LIKE LOWER(?)
-      ORDER BY o.full_name
+      ORDER BY b.end_time
       """;
     
     return jdbcTemplate.query(sql,(rs, rowNum) -> mapBookings(rs));
